@@ -14,6 +14,10 @@ public class Shopping {
 
 	public static void main(String[] args) throws IOException {
 
+		OrderProduct orderProduct = new OrderProduct();
+		PrintOrders printOrders = new PrintOrders();
+		SearchOrders searchOrders = new SearchOrders();
+
 		String FILE_NAME = "order.txt";
 
 		Scanner scanner = new Scanner(System.in);
@@ -31,16 +35,16 @@ public class Shopping {
 
 			switch (value) {
 			case 1:
-				WriteOrder(FILE_NAME, scanner);
+				orderProduct.WriteOrder(FILE_NAME, scanner);
 				break;
 			case 2:
-				ReadOrder(FILE_NAME);
+				printOrders.ReadOrder(FILE_NAME);
 				break;
 			case 3:
-				SearchByName(FILE_NAME, scanner);
+				searchOrders.SearchByName(FILE_NAME, scanner);
 				break;
 			case 4:
-				SearchByDate(FILE_NAME, scanner);
+				searchOrders.SearchByDate(FILE_NAME, scanner);
 				break;
 			case 5:
 				System.out.println("프로그램을 종료합니다...");
@@ -51,7 +55,11 @@ public class Shopping {
 
 	}
 
-	public static void WriteOrder(String FILE_NAME, Scanner scanner) throws IOException {
+}
+
+class OrderProduct {
+
+	void WriteOrder(String FILE_NAME, Scanner scanner) throws IOException {
 
 		FileWriter fw = new FileWriter(FILE_NAME, true);
 		BufferedWriter bw = new BufferedWriter(fw);
@@ -87,7 +95,11 @@ public class Shopping {
 		bw.close();
 	}
 
-	public static void ReadOrder(String FILE_NAME) throws IOException {
+}
+
+class PrintOrders {
+
+	void ReadOrder(String FILE_NAME) throws IOException {
 
 		FileReader fr = new FileReader(FILE_NAME);
 		BufferedReader br = new BufferedReader(fr);
@@ -101,7 +113,11 @@ public class Shopping {
 		br.close();
 	}
 
-	public static void SearchByName(String FILE_NAME, Scanner scanner) throws IOException {
+}
+
+class SearchOrders {
+
+	void SearchByName(String FILE_NAME, Scanner scanner) throws IOException {
 
 		FileReader fr = new FileReader(FILE_NAME);
 		BufferedReader br = new BufferedReader(fr);
@@ -122,7 +138,8 @@ public class Shopping {
 			if (line.contains(name + ",")) {
 				orderCount++;
 				int orders = Integer.valueOf(line.substring(line.indexOf(str0) + str0.length(), line.indexOf(str1)));
-				priceCount += orders * Integer.valueOf(line.substring(line.indexOf(str1) + str1.length(), line.indexOf(str2)));
+				priceCount += orders
+						* Integer.valueOf(line.substring(line.indexOf(str1) + str1.length(), line.indexOf(str2)));
 			}
 			line = br.readLine();
 		}
@@ -134,7 +151,7 @@ public class Shopping {
 
 	}
 
-	public static void SearchByDate(String FILE_NAME, Scanner scanner) throws IOException {
+	void SearchByDate(String FILE_NAME, Scanner scanner) throws IOException {
 
 		FileReader fr = new FileReader(FILE_NAME);
 		BufferedReader br = new BufferedReader(fr);
@@ -162,5 +179,5 @@ public class Shopping {
 		}
 		br.close();
 	}
-
+	
 }

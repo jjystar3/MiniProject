@@ -15,7 +15,6 @@ public class Shopping {
 	public static void main(String[] args) throws IOException {
 
 		OrderProduct orderProduct = new OrderProduct();
-		PrintOrders printOrders = new PrintOrders();
 		SearchOrders searchOrders = new SearchOrders();
 
 		String FILE_NAME = "order.txt";
@@ -38,7 +37,7 @@ public class Shopping {
 				orderProduct.WriteOrder(FILE_NAME, scanner);
 				break;
 			case 2:
-				printOrders.ReadOrder(FILE_NAME);
+				orderProduct.ReadOrder(FILE_NAME);
 				break;
 			case 3:
 				searchOrders.SearchByName(FILE_NAME, scanner);
@@ -94,10 +93,6 @@ class OrderProduct {
 		bw.flush();
 		bw.close();
 	}
-
-}
-
-class PrintOrders {
 
 	void ReadOrder(String FILE_NAME) throws IOException {
 
@@ -179,5 +174,5 @@ class SearchOrders {
 		}
 		br.close();
 	}
-	
+
 }

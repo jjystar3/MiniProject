@@ -5,6 +5,7 @@ import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
@@ -12,6 +13,8 @@ import java.util.Scanner;
 public class Shopping {
 
 	public static void main(String[] args) throws IOException {
+
+		String FILE_NAME = "order.txt";
 
 		Scanner scanner = new Scanner(System.in);
 
@@ -24,19 +27,20 @@ public class Shopping {
 			System.out.print("옵션을 선택하세요: ");
 
 			int value = scanner.nextInt();
+			scanner.nextLine();
 
 			switch (value) {
 			case 1:
-				WriteOrder();
+				WriteOrder(FILE_NAME, scanner);
 				break;
 			case 2:
-				ReadOrder();
+				ReadOrder(FILE_NAME);
 				break;
 			case 3:
-				SearchByName();
+				SearchByName(FILE_NAME, scanner);
 				break;
 			case 4:
-				SearchByDate();
+				SearchByDate(FILE_NAME, scanner);
 				break;
 			case 5:
 				System.out.println("프로그램을 종료합니다...");
@@ -47,14 +51,12 @@ public class Shopping {
 
 	}
 
-	public static void WriteOrder() throws IOException {
+	public static void WriteOrder(String FILE_NAME, Scanner scanner) throws IOException {
 
-		FileWriter fw = new FileWriter("order.txt", true);
+		FileWriter fw = new FileWriter(FILE_NAME, true);
 		BufferedWriter bw = new BufferedWriter(fw);
-		FileReader fr = new FileReader("order.txt");
+		FileReader fr = new FileReader(FILE_NAME);
 		BufferedReader br = new BufferedReader(fr);
-
-		Scanner scanner = new Scanner(System.in);
 
 		System.out.print("고객명: ");
 		String name = scanner.nextLine();
@@ -65,20 +67,18 @@ public class Shopping {
 		System.out.print("제품의가격: ");
 		int price = scanner.nextInt();
 
-		LocalDateTime curDateTime = LocalDateTime.now();
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-		String formatDate = curDateTime.format(formatter);
-
-		String str = String.format("고객명: %s, 제품명: %s, 주문수량: %d, 가격: %d", name, product, num, price);
-
 		int lines = 0;
 		while (br.readLine() != null)
 			lines++;
 		br.close();
 
-		bw.write("주문번호: " + (lines + 1) + ", ");
-		bw.write(str);
-		bw.write(", 주문일시: " + formatDate);
+		String str = String.format("고객명: %s, 제품명: %s, 주문수량: %d, 가격: %d", name, product, num, price);
+
+		LocalDateTime curDateTime = LocalDateTime.now();
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+		String formatDate = curDateTime.format(formatter);
+
+		bw.write("주문번호: " + (lines + 1) + ", " + str + ", 주문일시: " + formatDate);
 		bw.newLine();
 
 		System.out.println("주문이 완료되었습니다!");
@@ -87,9 +87,9 @@ public class Shopping {
 		bw.close();
 	}
 
-	public static void ReadOrder() throws IOException {
+	public static void ReadOrder(String FILE_NAME) throws IOException {
 
-		FileReader fr = new FileReader("order.txt");
+		FileReader fr = new FileReader(FILE_NAME);
 		BufferedReader br = new BufferedReader(fr);
 
 		String line = br.readLine();
@@ -101,30 +101,28 @@ public class Shopping {
 		br.close();
 	}
 
-	public static void SearchByName() throws IOException {
+	public static void SearchByName(String FILE_NAME, Scanner scanner) throws IOException {
 
-		FileReader fr = new FileReader("order.txt");
+		FileReader fr = new FileReader(FILE_NAME);
 		BufferedReader br = new BufferedReader(fr);
-
-		Scanner scanner = new Scanner(System.in);
 
 		System.out.print("고객명: ");
 		String name = scanner.nextLine();
 
-		String line = br.readLine();
-
 		int orderCount = 0;
 		int priceCount = 0;
 
-		String str1 = "가격: ";
+		String str0 = ", 주문수량: ";
+		String str1 = ", 가격: ";
 		String str2 = ", 주문일시";
+
+		String line = br.readLine();
 
 		while (line != null) {
 			if (line.contains(name + ",")) {
 				orderCount++;
-				int a = line.indexOf(str1) + str1.length();
-				int b = line.indexOf(str2);
-				priceCount += Integer.valueOf(line.substring(a, b));
+				int orders = Integer.valueOf(line.substring(line.indexOf(str0) + str0.length(), line.indexOf(str1)));
+				priceCount += orders * Integer.valueOf(line.substring(line.indexOf(str1) + str1.length(), line.indexOf(str2)));
 			}
 			line = br.readLine();
 		}
@@ -136,26 +134,27 @@ public class Shopping {
 
 	}
 
-	public static void SearchByDate() throws IOException {
+	public static void SearchByDate(String FILE_NAME, Scanner scanner) throws IOException {
 
-		FileReader fr = new FileReader("order.txt");
+		FileReader fr = new FileReader(FILE_NAME);
 		BufferedReader br = new BufferedReader(fr);
 
-		Scanner scanner = new Scanner(System.in);
-
 		System.out.print("날짜: ");
-		String date = scanner.nextLine();
+		String getDate = scanner.nextLine();
+
+		LocalDate date2 = LocalDate.parse(getDate);
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
 		String str = "주문일시: ";
 
 		String line = br.readLine();
 
 		while (line != null) {
+			String readDate = line.substring(line.indexOf(str) + str.length(), line.length());
+			LocalDateTime dateTime = LocalDateTime.parse(readDate, formatter);
+			LocalDate date = dateTime.toLocalDate();
 
-			int a = line.indexOf(str) + str.length();
-			int b = line.length();
-			String[] strArr = line.substring(a, b).split(" ");
-			if (strArr[0].contains(date)) {
+			if (date.equals(date2)) {
 				System.out.println(line);
 			}
 

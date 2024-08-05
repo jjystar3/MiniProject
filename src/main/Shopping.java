@@ -130,7 +130,7 @@ class SearchOrders {
 		String line = br.readLine();
 
 		while (line != null) {
-			if (line.contains(name + ",")) {
+			if (line.contains(" " + name + ",")) {
 				orderCount++;
 				int orders = Integer.valueOf(line.substring(line.indexOf(str0) + str0.length(), line.indexOf(str1)));
 				priceCount += orders
